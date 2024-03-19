@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body>
+        <p>Status:</p>
+        <div id="status"></div>
+
+        <p>Index:</p>
+        <div id="index"></div>
+
+        <p>Time:</p>
+        <div id="time"></div>
+
+        <script>
+            const status = document.getElementById('status');
+            const time = document.getElementById('time');
+            const index = document.getElementById('index');
+            // https://developer.mozilla.org/en-US/docs/Web/API/EventSource
+            const eventSource = new EventSource('/sse');
+
+            eventSource.onmessage = (event) => {
+                console.log('EventSource message:', event);
+                const json = JSON.parse(event.data);
+                time.textContent = json.time;
+                index.textContent = json.index;
+            };
+
+            eventSource.onopen = (event) => {
+                console.log('EventSource open:', event);
+                status.textContent = 'Connected';
+            };
+
+            eventSource.onerror = (error) => {
+                console.error('EventSource failed:', error);
+                eventSource.close();
+            };
+        </script>
+    </body>
+</html>
